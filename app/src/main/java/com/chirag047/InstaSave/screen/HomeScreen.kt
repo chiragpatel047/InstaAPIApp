@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -59,12 +61,9 @@ fun HomeScreen(context: Context) {
     val homeViewModel: HomeViewModel = viewModel()
     val video: State<InstaModel> = homeViewModel.data.collectAsState()
 
-    val isVideoIsReady = remember {
-        mutableStateOf(false)
-    }
 
-    Column() {
-        topBar()
+    Column {
+        topBar("Home")
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,6 +79,7 @@ fun HomeScreen(context: Context) {
                 onValueChange = {
                     search.value = it
                 },
+                singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 12.sp,
                     fontFamily = FontFamily(Font(R.font.poppins_medium))
@@ -101,35 +101,62 @@ fun HomeScreen(context: Context) {
             }
         }
 
-        Image(
-            painter = rememberImagePainter(video.value.thumbnail),
-            contentDescription = "",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(30.dp)
-                .background(Color.Black)
-
-        )
-
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            content = {
-                Text(
-                    text = "Download",
-                    fontFamily = FontFamily(Font(R.font.poppins_medium)),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(8.dp)
-                )
-            },
-            onClick = { downloadVideo(video.value.media, video.value.title, context) }
-        )
-
+        belowContent(video, context)
 
     }
+}
+
+@Composable
+fun belowContent(video: State<InstaModel>, context: Context) {
+
+
+    val isVideoIsReady = remember {
+        mutableStateOf(false)
+    }
+
+    if(!video.value.media.isEmpty()){
+        isVideoIsReady.value =true
+    }else{
+        isVideoIsReady.value =false
+    }
+
+    AnimatedVisibility(visible = isVideoIsReady.value) {
+        Column() {
+            Image(
+                painter = rememberImagePainter(video.value.thumbnail),
+                contentDescription = "",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp)
+                    .weight(1f)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(Color.Black)
+            )
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                content = {
+                    Text(
+                        text = "Download",
+                        fontFamily = FontFamily(Font(R.font.poppins_medium)),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                },
+                onClick = {
+                    downloadVideo(
+                        video.value.media,
+                        video.value.title,
+                        context
+                    )
+                }
+            )
+        }
+
+    }
+
 }
 
 fun downloadVideo(url: String, title: String, context: Context) {

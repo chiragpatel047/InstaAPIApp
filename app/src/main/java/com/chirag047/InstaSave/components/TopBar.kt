@@ -18,9 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.advanced.base.R
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun topBar() {
+fun topBar(title : String) {
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primaryContainer)
@@ -30,7 +29,7 @@ fun topBar() {
 
     ) {
         Text(
-            text = "Insta Save",
+            text = title,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontSize = 26.sp,
             fontFamily = FontFamily(Font(R.font.poppins_medium))
