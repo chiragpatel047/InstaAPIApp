@@ -54,13 +54,14 @@ import com.chirag047.InstaSave.models.InstaModel
 import com.chirag047.InstaSave.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.StateFlow
 
+val isVideoIsReady = mutableStateOf(false)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(context: Context) {
 
     val homeViewModel: HomeViewModel = viewModel()
     val video: State<InstaModel> = homeViewModel.data.collectAsState()
-
 
     Column {
         topBar("Home")
@@ -97,27 +98,20 @@ fun HomeScreen(context: Context) {
                 })
 
             FilledCustomButton(imageIcon = R.drawable.searchicon) {
+                isVideoIsReady.value = false
                 homeViewModel.getVideo(search.value)
             }
         }
 
         belowContent(video, context)
-
     }
 }
 
 @Composable
 fun belowContent(video: State<InstaModel>, context: Context) {
 
-
-    val isVideoIsReady = remember {
-        mutableStateOf(false)
-    }
-
-    if(!video.value.media.isEmpty()){
-        isVideoIsReady.value =true
-    }else{
-        isVideoIsReady.value =false
+    if (!video.value.media.isEmpty()) {
+        isVideoIsReady.value = true
     }
 
     AnimatedVisibility(visible = isVideoIsReady.value) {

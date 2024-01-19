@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.advanced.base.R
 
 @Composable
-fun topBar(title : String) {
+fun topBar(title: String) {
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primaryContainer)
